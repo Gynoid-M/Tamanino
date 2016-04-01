@@ -5,7 +5,7 @@ int lcd_key     = 0;
 int adc_key_in  = 0;
 int Totlife = 5;
 unsigned long previousMillis = 0;
-unsigned long timeToAction = 1000;
+unsigned long timeToAction = 3000;
 #define btnRIGHT  0 // 0
 #define btnUP     1 //144
 #define btnDOWN   2 //332
@@ -19,44 +19,24 @@ void sick();
 void hungry();
 void life();
 void passofTime();
-
+void game();
+void healthy();
 void setup() {
-  Serial.begin(9600);
- // lcd.createChar(0,bird);
-  lcd.begin(16, 2);              // Inicializar el LCD
+  
+  lcd.begin(16, 2);             
   lcd.setCursor(0,0);
   lcd.print("Tamagotchi");
   lcd.setCursor(0,1);
   lcd.print("Select to start");
   
-  
-  // put your setup code here, to run once:
-
 }
 
 void loop() {
   
-  
   int instruction = read_LCD_buttons();
-  
   if(instruction == btnSELECT)
-   {  lcd.clear();
-      lcd.setCursor(6,0);
-      lcd.print("ovo");
-      life();
-   }
-
-   passofTime();
-    
-   
-   if(instruction == btnUP)
-   {
-      feed();
-   }
-
-  
+    game();
  
-
 }
 
 int read_LCD_buttons()
@@ -86,14 +66,18 @@ void feed ()
    {
       
       lcd.setCursor(i,0);
-      lcd.print("3");
+      lcd.print("*");
       delay(1000);
       lcd.setCursor(i,0);
       lcd.print(" ");
       
       
    }
+   Totlife = 5;
    mouthMovement();
+   healthy();
+   life();
+   
 }
 
 void mouthMovement()
@@ -158,8 +142,29 @@ void passofTime() {
 
   
 }
+void healthy(){
+   lcd.clear();
+    lcd.setCursor(6,0);
+    lcd.print("ovo");
+    life();
+}
 
 void game(){
+
+ //aux loop, for the main game. 
+  healthy();
+  while(true)
+  {
+    int instruction = read_LCD_buttons();
+  
+    passofTime();
+    
+   
+   if(instruction == btnUP)
+   {
+      feed();
+   }
+  }
   
 }
 
