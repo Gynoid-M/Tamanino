@@ -3,6 +3,9 @@
 LiquidCrystal lcd (8, 9, 4, 5, 6, 7);
 int lcd_key     = 0;
 int adc_key_in  = 0;
+int Totlife = 5;
+unsigned long previousMillis = 0;
+unsigned long timeToAction = 1000;
 #define btnRIGHT  0 // 0
 #define btnUP     1 //144
 #define btnDOWN   2 //332
@@ -12,9 +15,13 @@ int adc_key_in  = 0;
 int read_LCD_buttons();
 void feed();
 void mouthMovement();
+void sick();
+void hungry();
+void life();
+void passofTime();
 
 void setup() {
-  //Serial.begin(9600);
+  Serial.begin(9600);
  // lcd.createChar(0,bird);
   lcd.begin(16, 2);              // Inicializar el LCD
   lcd.setCursor(0,0);
@@ -36,12 +43,18 @@ void loop() {
    {  lcd.clear();
       lcd.setCursor(6,0);
       lcd.print("ovo");
+      life();
    }
 
+   passofTime();
+    
+   
    if(instruction == btnUP)
    {
       feed();
    }
+
+  
  
 
 }
@@ -100,4 +113,56 @@ void mouthMovement()
       lcd.print("ovo");
   
 }
+
+void sick()
+{
+  lcd.setCursor(6,0);
+  lcd.print("=v=");
+  lcd.setCursor(4,1);
+  lcd.print("I'm sick");
+}
+
+void hungry()
+{
+  lcd.setCursor(6,0);
+  lcd.print("TvT");
+  lcd.setCursor(4,1);
+  lcd.print("I'm hungry");
+}
+
+void life()
+{
+  lcd.setCursor(11,0);
+  if(Totlife >= 0)
+  {
+    lcd.print(Totlife);
+    lcd.print("H");
+  }
+  else
+  {
+    lcd.print(0);
+    lcd.print("H");
+    hungry();
+  }
+  
+}
+
+void passofTime() {
+   unsigned long currentMillis = millis();
+   if(currentMillis - previousMillis >= timeToAction)
+   {
+     Totlife --;
+     previousMillis = currentMillis;
+     life();
+   }
+
+  
+}
+
+void game(){
+  
+}
+
+
+
 
