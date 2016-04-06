@@ -5,7 +5,7 @@ int lcd_key     = 0;
 int adc_key_in  = 0;
 int Totlife = 5;
 unsigned long previousMillis = 0;
-unsigned long timeToAction = 3000;
+
 #define btnRIGHT  0 // 0
 #define btnUP     1 //144
 #define btnDOWN   2 //332
@@ -15,12 +15,15 @@ unsigned long timeToAction = 3000;
 int read_LCD_buttons();
 void feed();
 void mouthMovement();
+void moveObject(char* object);
+void cure();
 void sick();
 void hungry();
 void life();
 void passofTime();
 void game();
 void healthy();
+void sickness(unsigned long timetoAction);
 void setup() {
   
   lcd.begin(16, 2);             
@@ -59,20 +62,16 @@ int read_LCD_buttons()
 
 
 }
-
+void cure ()
+{
+  moveObject("+");
+  Totlife = 5;
+  healthy();
+  life();
+}
 void feed () 
 {
-   for(int i = 0; i<6; i++)
-   {
-      
-      lcd.setCursor(i,0);
-      lcd.print("*");
-      delay(1000);
-      lcd.setCursor(i,0);
-      lcd.print(" ");
-      
-      
-   }
+   moveObject("*");
    Totlife = 5;
    mouthMovement();
    healthy();
@@ -80,6 +79,19 @@ void feed ()
    
 }
 
+void moveObject(char* object) {
+    for(int i = 0; i<6; i++)
+   {
+      
+      lcd.setCursor(i,0);
+      lcd.print(object[0]);
+      delay(1000);
+      lcd.setCursor(i,0);
+      lcd.print(" ");
+      
+      
+   }
+}
 void mouthMovement()
 {
       lcd.setCursor(5,0);
@@ -131,7 +143,7 @@ void life()
   
 }
 
-void passofTime() {
+void passofTime( unsigned long timeToAction ) {
    unsigned long currentMillis = millis();
    if(currentMillis - previousMillis >= timeToAction)
    {
@@ -141,6 +153,15 @@ void passofTime() {
    }
 
   
+}
+
+void sickness (unsigned long timeToAction) {
+  unsigned long currentMillis = millis();
+  if(currentMillis - previousMillis >= timeToAction)
+   {
+     previousMillis = currentMillis;
+     sick();
+   }
 }
 void healthy(){
    lcd.clear();
@@ -153,18 +174,26 @@ void game(){
 
  //aux loop, for the main game. 
   healthy();
+   
   while(true)
   {
+   
     int instruction = read_LCD_buttons();
   
-    passofTime();
-    
+    passofTime(3000);
+    sickness (5000);
    
    if(instruction == btnUP)
    {
       feed();
    }
-  }
+
+   if(instruction == btnDOWN)
+   {
+     cure();
+   }
+
+   }
   
 }
 
